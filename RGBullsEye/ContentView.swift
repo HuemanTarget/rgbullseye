@@ -13,9 +13,20 @@ struct ContentView: View {
     @State var bGuess: Double
     @State var gGuess: Double
     
+    @State var showAlert: Bool = false
+    
     let rTarget = Double.random(in: 0..<1)
     let gTarget = Double.random(in: 0..<1)
     let bTarget = Double.random(in: 0..<1)
+    
+    func computeScore() -> Int {
+        let rDiff = rGuess - rTarget
+        let gDiff = gGuess - gTarget
+        let bDiff = bGuess - bTarget
+        let diff = sqrt((rDiff * rDiff + gDiff * gDiff + bDiff * bDiff / 3.0 ))
+        
+        return lround((1.0 - diff) * 100.0)
+    }
     
     // MARK:- BODY
     var body: some View {
@@ -32,9 +43,14 @@ struct ContentView: View {
                         .padding()
                 }//: VSTACK
             }//: HSTACK
-            Button(action: {}) {
+            Button(action: {self.showAlert = true}) {
                 Text("Hit Me")
             }
+            .alert(isPresented: $showAlert){
+                Alert(title: Text("Your Score"), message: Text(String(computeScore())))
+            }
+            .padding()
+            
             ColorSlider(value: $rGuess, textColor: .red)
             ColorSlider(value: $gGuess, textColor: .green)
             ColorSlider(value: $bGuess, textColor: .blue)
